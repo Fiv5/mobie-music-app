@@ -5,7 +5,6 @@
     </div>
     <div class="dots">
       <span class="dot" v-for="(item, idx) of dots" :key="idx" :class="{active: idx===currPageIndex}">
-
       </span>
     </div>
   </div>
@@ -33,7 +32,7 @@ export default {
     },
     interval: {
       type: Number,
-      default: 4000,
+      default: 3000,
     },
   },
   // 等待dom全部加载完毕, 20ms是因为浏览器的刷新频率是17hz
@@ -54,12 +53,14 @@ export default {
         return
       }
       this._setSliderWidth(true)
+      if (this.autoPlay) {
+        this._play()
+      }
       this.slider.refresh()
     })
   },
   methods: {
     _setSliderWidth(isResize) {
-      // console.log(this.$refs)
       this.children = this.$refs.sliderGroup.children
       let width = 0
       let sliderWidth = this.$refs.slider.clientWidth
@@ -95,6 +96,7 @@ export default {
         }
         this.currPageIndex = pageIndex
 
+        // 重置定时器防止动画重复
         if (this.autoPlay) {
           clearTimeout(this.timer)
           this._play()
@@ -113,6 +115,10 @@ export default {
         this.slider.goToPage(pageIndex, 0, 400)
       }, this.interval)
     },
+  },
+  destroyed() {
+    // 当组件里有计时器等资源时, 销毁组件需记得清除定时器, 已防止内存泄漏
+    clearTimeout(this.timer)
   },
 }
 </script>
