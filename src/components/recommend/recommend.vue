@@ -31,6 +31,7 @@ export default {
   created() {
     this._getRecommend()
     this._getDiscList()
+    // this._getCommendList()
   },
   methods: {
     _getRecommend() {
@@ -43,8 +44,9 @@ export default {
     },
     _getDiscList() {
       getDiscList().then(res => {
+        console.log('------------------------------getDiscList')
         console.log(res)
-        if (res.ERR_OK) {
+        if (res.code === ERR_OK) {
           console.log(res.data)
         }
       })
