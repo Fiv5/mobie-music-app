@@ -1,35 +1,52 @@
 <template>
   <div class="recommend">
-    <div class="recommend-content">
-      <div v-if="recommends.length" class="slider-wrapper">
-        <slider>
-          <div v-for="recommend of recommends" :key="recommend.id">
-            <a :href="recommend.linkUrl">
-              <img :src="recommend.picUrl" alt="" />
-            </a>
-          </div>
-        </slider>
+    <scroll ref="scroll" class="recommend-content" :data="discList">
+      <div>
+        <div v-if="recommends.length" class="slider-wrapper">
+          <slider>
+            <div v-for="recommend of recommends" :key="recommend.id">
+              <a :href="recommend.linkUrl">
+                <img @load="loadImage" :src="recommend.picUrl" alt="" />
+              </a>
+            </div>
+          </slider>
+        </div>
+        <div class="recommend-list">
+          <h1 class="list-title">热门歌单推荐</h1>
+          <ul>
+            <li v-for="item of discList" class="item" :key="item.dissid">
+              <div class="icon">
+                <img v-lazy="item.imgurl" width="60" height="60" alt="">
+              </div>
+              <div class="text">
+                <h2 class="name" v-html="item.creator.name"></h2>
+                <p class="desc" v-html="item.dissname"></p>
+              </div>
+            </li>
+          </ul>
+        </div>
       </div>
-      <div class="recommend-list">
-        <h1 class="list-title">热门歌单推荐</h1>
-        <ul></ul>
-      </div>
-    </div>
+    </scroll>
   </div>
 </template>
 
 <script>
+import Scroll from 'src/base/scroll/scroll'
 import Slider from 'src/base/slider/slider'
 import { getRecommend, getDiscList } from 'src/api/recommend'
 import { ERR_OK } from 'src/api/config'
+import { setTimeout } from 'timers'
 export default {
   data() {
     return {
       recommends: [],
+      discList: [],
     }
   },
   created() {
-    this._getRecommend()
+    setTimeout(() => {
+      this._getRecommend()
+    }, 2000)
     this._getDiscList()
     // this._getCommendList()
   },
@@ -45,15 +62,21 @@ export default {
     _getDiscList() {
       getDiscList().then(res => {
         console.log('------------------------------getDiscList')
-        console.log(res)
         if (res.code === ERR_OK) {
-          console.log(res.data)
+          this.discList = res.data.list
         }
       })
+    },
+    loadImage() {
+      if (!this.checkLoaded) {
+        this.$refs.scroll.refresh()
+        this.checkLoaded = true
+      }
     },
   },
   components: {
     Slider,
+    Scroll,
   },
 }
 </script>

@@ -14,47 +14,79 @@ export const getRecommend = () => {
   return jsonp(url, data, options)
 }
 
+// QQ音乐 --- 歌单列表
 export const getDiscList = () => {
-  // const url = 'http://ustbhuangyi.com/music/api/getCdInfo'
   const url = '/api/getDiscList'
-
   const data = Object.assign({}, commonParams, {
     platform: 'yqq',
     hostUin: 0,
-    g_tk: 1928093487,
-    disstid: 3701583902,
+    g_tk: 1591850326,
+    loginUin: 362459825,
     sortId: 5,
     needNewCode: 0,
     categoryId: 10000000,
-    type: 1,
-    json: 1,
+    sin: 0,
+    ein: 29,
     utf8: 1,
     format: 'json',
     onlysong: 0,
     rnd: Math.random()
   })
-  // console.log(data)
   return axios
     .get(url, {
       params: data
     })
     .then(res => Promise.resolve(res.data))
-  // return jsonp(url, data, options)
+    .catch(e => console.log(e))
 }
+
+// 黄轶API
 // export const getDiscList = () => {
-//   const url = 'https://c.y.qq.com/splcloud/fcgi-bin/fcg_get_diss_by_tag.fcg'
+//   // const url = 'http://ustbhuangyi.com/music/api/getCdInfo'
+//   const url = '/api/getDiscList'
+
 //   const data = Object.assign({}, commonParams, {
-//     picmid: 1,
-//     g_tk: 1591850326,
 //     platform: 'yqq',
 //     hostUin: 0,
-//     sin: 0,
-//     ein: 29,
+//     g_tk: 1928093487,
+//     disstid: 3701583902,
 //     sortId: 5,
 //     needNewCode: 0,
 //     categoryId: 10000000,
-//     // jsonpCallback: 'getPlaylist',
+//     type: 1,
+//     json: 1,
+//     utf8: 1,
+//     format: 'json',
+//     onlysong: 0,
 //     rnd: Math.random()
 //   })
-//   return jsonp(url, data, options)
+//   // console.log(data)
+//   return axios
+//     .get(url, {
+//       params: data
+//     })
+//     .then(res => Promise.resolve(res.data))
+//   // return jsonp(url, data, options)
+// }
+
+// QQ音乐API ----  歌单类别
+// export const getDiscList = () => {
+//   const url = '/api/getDiscList'
+//   const data = Object.assign({}, commonParams, {
+//     picmid: 1,
+//     g_tk: 1591850326,
+//     loginUin: 362459825,
+//     format: 'json',
+//     platform: 'yqq',
+//     hostUin: 0,
+//     needNewCode: 0,
+//     categoryId: 10000000,
+//     rnd: Math.random()
+//   })
+//   return axios
+//     .get(url, {
+//       params: data
+//     })
+//     .then(res => Promise.resolve(res.data))
+//     .catch(e => console.log(e))
 // }
