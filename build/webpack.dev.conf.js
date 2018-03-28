@@ -56,19 +56,52 @@ const devWebpackConfig = merge(baseWebpackConfig, {
       poll: config.dev.poll
     },
     before(app) {
+      // 歌单列表
       apiRoutes.get('/getDiscList', function(req, res) {
-        const url = 'http://ustbhuangyi.com/music/api/getCdInfo'
+        const url =
+          'https://c.y.qq.com/splcloud/fcgi-bin/fcg_get_diss_by_tag.fcg'
         const params = req.query
         axios
           .get(url, {
             headers: {
-              host: 'ustbhuangyi.com'
+              referer: 'https://y.qq.com/portal/playlist.html'
             },
             params
           })
           .then(response => res.json(response.data))
           .catch(e => console.log(e))
       })
+
+      // 歌单分类
+      // apiRoutes.get('/getDiscList', function(req, res) {
+      //   const url =
+      //     'https://c.y.qq.com/splcloud/fcgi-bin/fcg_get_diss_tag_conf.fcg'
+      //   const params = req.query
+      //   axios
+      //     .get(url, {
+      //       headers: {
+      //         referer: 'https://y.qq.com/portal/playlist.html'
+      //       },
+      //       params
+      //     })
+      //     .then(response => res.json(response.data))
+      //     .catch(e => console.log(e))
+      // })
+
+      // apiRoutes.get('/getDiscList', function(req, res) {
+      //   const url = 'http://ustbhuangyi.com/music/api/getCdInfo'
+      //   const params = req.query
+      //   axios
+      //     .get(url, {
+      //       headers: {
+      //         host: 'ustbhuangyi.com'
+      //       },
+      //       params
+      //     })
+      //     .then(response => res.json(response.data))
+      //     .catch(e => console.log(e))
+      // })
+
       app.use('/api', apiRoutes)
     }
   },
