@@ -3,7 +3,7 @@
     <scroll ref="scroll" class="recommend-content" :data="discList">
       <div>
         <div v-if="recommends.length" class="slider-wrapper">
-          <slider>
+          <slider @setSliderWidthDone="setSliderWidthDone">
             <div v-for="recommend of recommends" :key="recommend.id">
               <a :href="recommend.linkUrl">
                 <img @load="loadImage" :src="recommend.picUrl" alt="" />
@@ -25,9 +25,9 @@
             </li>
           </ul>
         </div>
-        <div class="loading-container" v-show="!discList.length">
-          <loading></loading>
-        </div>
+      </div>
+      <div class="loading-container" v-show="!discList.length">
+        <loading></loading>
       </div>
     </scroll>
   </div>
@@ -39,7 +39,6 @@ import Slider from 'src/base/slider/slider'
 import Loading from 'src/base/loading/loading'
 import { getRecommend, getDiscList } from 'src/api/recommend'
 import { ERR_OK } from 'src/api/config'
-import { setTimeout } from 'timers'
 export default {
   data() {
     return {
@@ -48,9 +47,7 @@ export default {
     }
   },
   created() {
-    setTimeout(() => {
-      this._getRecommend()
-    }, 2000)
+    this._getRecommend()
     this._getDiscList()
     // this._getCommendList()
   },
@@ -76,6 +73,9 @@ export default {
         this.$refs.scroll.refresh()
         this.checkLoaded = true
       }
+    },
+    setSliderWidthDone() {
+      this.$refs.scroll.refresh()
     },
   },
   components: {
