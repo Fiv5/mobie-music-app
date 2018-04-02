@@ -9,7 +9,8 @@
       <li class="list-group" v-for="group of data" :key="group.title" ref="listGroup">
         <h2 class="list-group-title">{{group.title}}</h2>
         <ul>
-          <li v-for="item of group.items" :key="item.id"
+          <li v-for="item of group.items"
+              :key="item.id"
               class="list-group-item">
             <img class="avatar" v-lazy="item.avatar" alt="">
             <span class="name">{{item.name}}</span>
@@ -17,7 +18,9 @@
         </ul>
       </li>
     </ul>
-    <div class="list-shortcut" @touchstart="onShortcutTouchStart" @touchmove.stop.prevent="onShortcutTouchMove">
+    <div class="list-shortcut"
+         @touchstart="onShortcutTouchStart"
+         @touchmove.stop.prevent="onShortcutTouchMove">
       <ul>
         <li v-for="(item, index) of shortcutList"
             :key="item"
@@ -101,11 +104,13 @@ export default {
       if (!index && index !== 0) {
         return
       }
+      // 适应滑动到shortcut上下内边距的情况
       if (index < 0) {
         index = 0
       } else if (index > this.listHeight.length - 2) {
         index = this.listHeight.length - 2
       }
+      // 得到相应item的clientHeight之和, 然后手动通过better-scroll滑到至该位置
       this.scrollY = -this.listHeight[index]
       this.$refs.listview.scrollToElement(this.$refs.listGroup[index], 0)
     },
@@ -129,8 +134,9 @@ export default {
       }, 20)
     },
     scrollY(newY) {
+      // 主要处理左边list-item的touch事件处理
       const { listHeight } = this
-      // 当滚动到顶部, newY >= 0
+      // 当滚动到顶部上方, newY >= 0
       if (newY >= 0) {
         this.currIndex = 0
         return
@@ -163,69 +169,92 @@ export default {
 </script>
 
 <style scoped lang="stylus" rel="stylesheet/stylus">
-@import "~common/stylus/variable"
+@import '~common/stylus/variable';
 
-.listview
-  position: relative
-  width: 100%
-  height: 100%
-  overflow: hidden
-  background: $color-background
-  .list-group
-    padding-bottom: 30px
-    .list-group-title
-      height: 30px
-      line-height: 30px
-      padding-left: 20px
-      font-size: $font-size-small
-      color: $color-text-l
-      background: $color-highlight-background
-    .list-group-item
-      display: flex
-      align-items: center
-      padding: 20px 0 0 30px
-      .avatar
-        width: 50px
-        height: 50px
-        border-radius: 50%
-      .name
-        margin-left: 20px
-        color: $color-text-l
-        font-size: $font-size-medium
-  .list-shortcut
-    position: absolute
-    z-index: 30
-    right: 0
-    top: 50%
-    transform: translateY(-50%)
-    width: 20px
-    padding: 20px 0
-    border-radius: 10px
-    text-align: center
-    background: $color-background-d
-    font-family: Helvetica
-    .item
-      padding: 3px
-      line-height: 1
-      color: $color-text-l
-      font-size: $font-size-small
-      &.current
-        color: $color-theme
-  .list-fixed
-    position: absolute
-    top: 0
-    left: 0
-    width: 100%
-    .fixed-title
-      height: 30px
-      line-height: 30px
-      padding-left: 20px
-      font-size: $font-size-small
-      color: $color-text-l
-      background: $color-highlight-background
-  .loading-container
-    position: absolute
-    width: 100%
-    top: 50%
-    transform: translateY(-50%)
+.listview {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: $color-background;
+
+  .list-group {
+    padding-bottom: 30px;
+
+    .list-group-title {
+      height: 30px;
+      line-height: 30px;
+      padding-left: 20px;
+      font-size: $font-size-small;
+      color: $color-text-l;
+      background: $color-highlight-background;
+    }
+
+    .list-group-item {
+      display: flex;
+      align-items: center;
+      padding: 20px 0 0 30px;
+
+      .avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+      }
+
+      .name {
+        margin-left: 20px;
+        color: $color-text-l;
+        font-size: $font-size-medium;
+      }
+    }
+  }
+
+  .list-shortcut {
+    position: absolute;
+    z-index: 30;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    padding: 20px 0;
+    border-radius: 10px;
+    text-align: center;
+    background: $color-background-d;
+    font-family: Helvetica;
+
+    .item {
+      padding: 3px;
+      line-height: 1;
+      color: $color-text-l;
+      font-size: $font-size-small;
+
+      &.current {
+        color: $color-theme;
+      }
+    }
+  }
+
+  .list-fixed {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+
+    .fixed-title {
+      height: 30px;
+      line-height: 30px;
+      padding-left: 20px;
+      font-size: $font-size-small;
+      color: $color-text-l;
+      background: $color-highlight-background;
+    }
+  }
+
+  .loading-container {
+    position: absolute;
+    width: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+}
 </style>
