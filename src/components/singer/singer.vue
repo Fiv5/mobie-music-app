@@ -1,11 +1,14 @@
 <template>
   <div class="singer">
-    <list-view :data="singers"></list-view>
+    <list-view @select="selectSinger" :data="singers"></list-view>
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
 import { getSingerList } from 'src/api/singer'
+import { mapMutations } from 'vuex'
+import * as types from 'src/store/mutation-types'
 import { ERR_OK } from 'src/api/config'
 import Singer from 'common/js/singer'
 import ListView from 'src/base/listview/listview'
@@ -20,6 +23,13 @@ export default {
     this._getSingerList()
   },
   methods: {
+    selectSinger(singer) {
+      const { id } = singer
+      this.$router.push({
+        path: `/singer/${id}`,
+      })
+      this.setSinger(singer)
+    },
     _getSingerList() {
       getSingerList().then(res => {
         if (res.code === ERR_OK) {
@@ -74,6 +84,9 @@ export default {
       ret.sort((a, b) => a.title.charCodeAt(0) - b.title.charCodeAt(0))
       return hot.concat(ret)
     },
+    ...mapMutations({
+      setSinger: types.SET_SINGER,
+    }),
   },
   components: {
     ListView,
@@ -82,9 +95,10 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-  .singer
-    position: fixed
-    top: 88px
-    bottom: 0
-    width: 100%
+.singer {
+  position: fixed;
+  top: 88px;
+  bottom: 0;
+  width: 100%;
+}
 </style>

@@ -71,6 +71,21 @@ const devWebpackConfig = merge(baseWebpackConfig, {
           .then(response => res.json(response.data))
           .catch(e => console.log(e))
       })
+      // 歌手详情
+      apiRoutes.get('/getSingerDetail', function(req, res) {
+        const url = 'https://c.y.qq.com/v8/fcg-bin/fcg_v8_singer_track_cp.fcg'
+        const params = req.query
+        const id = params.singermid
+        axios
+          .get(url, {
+            headers: {
+              referer: `https://y.qq.com/n/yqq/singer/${id}.html`
+            },
+            params
+          })
+          .then(response => res.json(response.data))
+          .catch(e => console.log(e))
+      })
 
       // 歌单分类
       // apiRoutes.get('/getDiscList', function(req, res) {

@@ -10,6 +10,7 @@
         <h2 class="list-group-title">{{group.title}}</h2>
         <ul>
           <li v-for="item of group.items"
+              @click="selectSinger(item)"
               :key="item.id"
               class="list-group-item">
             <img class="avatar" v-lazy="item.avatar" alt="">
@@ -82,6 +83,9 @@ export default {
     },
   },
   methods: {
+    selectSinger(singer) {
+      this.$emit('select', singer)
+    },
     onShortcutTouchStart(e) {
       let anchorIndex = parseInt(getData(e.target, 'index'), 10)
       let firstTouch = e.touches[0]
