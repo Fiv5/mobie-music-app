@@ -3,7 +3,7 @@
     <scroll ref="scroll" class="recommend-content" :data="discList">
       <div>
         <div v-if="recommends.length" class="slider-wrapper">
-          <slider @setSliderWidthDone="setSliderWidthDone">
+          <slider>
             <div v-for="recommend of recommends" :key="recommend.id">
               <a :href="recommend.linkUrl">
                 <img @load="loadImage" :src="recommend.picUrl" alt="" />

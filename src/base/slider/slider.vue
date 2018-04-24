@@ -38,7 +38,7 @@ export default {
   // 等待dom全部加载完毕, 20ms是因为浏览器的刷新频率是17hz
   mounted() {
     // debugger
-    setTimeout(() => {
+    this.$nextTick(() => {
       this._setSliderWidth()
       this._initDots()
       this._initSlider()
@@ -46,7 +46,7 @@ export default {
       if (this.autoPlay) {
         this._play()
       }
-    }, 20)
+    })
 
     window.addEventListener('resize', () => {
       if (!this.slider) {
@@ -76,7 +76,7 @@ export default {
         width += 2 * sliderWidth
       }
       this.$refs.sliderGroup.style.width = width + 'px'
-      this.$emit('setSliderWidthDone')
+      // this.$emit('setSliderWidthDone')
     },
     _initSlider() {
       this.slider = new BScroll(this.$refs.slider, {

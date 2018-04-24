@@ -14,7 +14,7 @@ import MusicList from 'src/components/music-list/music-list'
 export default {
   data() {
     return {
-      songs: null,
+      songs: [],
     }
   },
   created() {
