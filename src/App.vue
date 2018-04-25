@@ -5,17 +5,21 @@
     <keep-alive>
       <router-view></router-view>
     </keep-alive>
+    <!-- 播放器与路由切换无关 -->
+    <player></player>
   </div>
 </template>
 
 <script>
 import MHeader from 'components/m-header/m-header'
 import Tab from 'components/tab/tab'
+import Player from 'components/player/player'
 
 export default {
   components: {
     MHeader,
     Tab,
+    Player,
   },
 }
 </script>
@@ -23,7 +27,7 @@ export default {
 <style lang="stylus" scoped>
 @import '~common/stylus/variable';
 
-#app
-  color: $color-theme
-
+#app {
+  color: $color-theme;
+}
 </style>
