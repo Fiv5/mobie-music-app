@@ -1,7 +1,7 @@
 import originJSONP from 'jsonp'
 
 /**
- * 将jsonp默认回调形式封装为promise形式
+ * 将jsonp默认回调形式封装为promise形式.
  *
  * @export
  * @param {any} url 请求地址
