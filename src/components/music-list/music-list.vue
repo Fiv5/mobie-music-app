@@ -27,11 +27,11 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
 import Scroll from 'src/base/scroll/scroll'
 import SongList from 'src/base/song-list/song-list'
 import { prefixStyle } from 'common/js/dom'
 import Loading from 'src/base/loading/loading'
-import { mapActions } from 'vuex'
 
 const OFFSET_HEIGHT = 40
 const transform = prefixStyle('transform')

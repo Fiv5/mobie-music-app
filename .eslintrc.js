@@ -26,9 +26,9 @@ module.exports = {
     // function括号前不加空格
     'space-before-function-paren': 'off',
     'comma-dangle': 'off',
-    'eol-last': 0,
-    'space-before-function-paren': 0,
-    'no-trailing-spaces': 0,
-    'computed-property-even-spacing ': 0
+    'eol-last': 'off',
+    'space-before-function-paren': 'off',
+    'no-trailing-spaces': 'off',
+    'standard/computed-property-even-spacing': 'off'
   }
 }
