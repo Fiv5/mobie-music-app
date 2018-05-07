@@ -201,7 +201,8 @@ export default {
 
         .text {
           display: inline-block;
-          vertical-align: middle;
+          margin-left: 3px;
+          vertical-align: 3px;
           font-size: $font-size-small;
         }
       }

@@ -27,18 +27,25 @@
           </div>
         </div>
         <div class="bottom">
+          <div class="progress-wrapper">
+            <span class="time time-l">{{format(currentTime)}}</span>
+            <div class="progress-bar-wrapper">
+              <progress-bar :percent="percent"></progress-bar>
+            </div>
+            <span class="time time-r">{{format(currentSong.duration)}}</span>
+          </div>
           <div class="operators">
             <div class="icon i-left">
               <i class="icon-sequence"></i>
             </div>
-            <div class="icon i-left">
-              <i class="icon-prev"></i>
+            <div class="icon i-left" :class="disableCls">
+              <i @click="prev" class="icon-prev"></i>
             </div>
-            <div class="icon i-center">
+            <div class="icon i-center" :class="disableCls">
               <i @click="togglePlaying" :class="playIcon"></i>
             </div>
-            <div class="icon i-right">
-              <i class="icon-next"></i>
+            <div class="icon i-right" :class="disableCls">
+              <i @click="next" class="icon-next"></i>
             </div>
             <div class="icon i-right">
               <i class="icon icon-not-favorite"></i>
@@ -65,7 +72,12 @@
 
       </div>
     </transition>
-    <audio ref="audio" :src="currentSong.url"></audio>
+    <audio ref="audio" :src="currentSong.url"
+           @canplay="ready"
+           @error="error"
+           @timeupdate="updateTime"
+           >
+    </audio>
   </div>
 </template>
 
@@ -74,10 +86,20 @@ import { mapGetters, mapMutations } from 'vuex'
 import * as types from 'src/store/mutation-types'
 import animations from 'create-keyframe-animation'
 import { prefixStyle } from 'src/common/js/dom'
+import ProgressBar from 'src/base/progress-bar/progress-bar'
 
 const transform = prefixStyle('transform')
 export default {
+  data() {
+    return {
+      songReady: false,
+      currentTime: 0,
+    }
+  },
   computed: {
+    percent() {
+      return parseFloat(this.currentTime / this.currentSong.duration)
+    },
     cdCls() {
       return this.playing ? 'play' : 'play pause'
     },
@@ -87,9 +109,66 @@ export default {
     miniIcon() {
       return this.playing ? 'icon-pause-mini' : 'icon-play-mini'
     },
-    ...mapGetters(['fullScreen', 'playlist', 'currentSong', 'playing']),
+    ...mapGetters([
+      'fullScreen',
+      'playlist',
+      'currentSong',
+      'playing',
+      'currentIndex',
+    ]),
+    disableCls() {
+      return this.songReady ? '' : 'disable'
+    },
   },
   methods: {
+    _pad(num, n = 2) {
+      let l = num.toString().length
+      while (l++ < n) {
+        num = '0' + num
+      }
+      return num
+    },
+    format(interval) {
+      interval = ~~interval
+      const minute = ~~(interval / 60)
+      const second = interval % 60
+      return `${this._pad(minute)}:${this._pad(second)}`
+    },
+    updateTime(e) {
+      this.currentTime = e.target.currentTime
+    },
+    error() {},
+    ready() {
+      this.songReady = true
+    },
+    prev() {
+      if (!this.songReady) {
+        return
+      }
+      let index = this.currentIndex - 1
+      if (index === -1) {
+        index = this.playlist.length - 1
+      }
+      this.setCurrentIndex(index)
+      if (this.playing === false) {
+        this.togglePlaying()
+      }
+      this.songReady = false
+    },
+    next() {
+      if (!this.songReady) {
+        return
+      }
+      let index = this.currentIndex + 1
+      if (index === this.playlist.length) {
+        index = 0
+      }
+      this.setCurrentIndex(index)
+      if (this.playing === false) {
+        this.togglePlaying()
+      }
+      this.songReady = false
+    },
     togglePlaying() {
       this.setPlayingState(!this.playing)
     },
@@ -160,7 +239,11 @@ export default {
     ...mapMutations({
       setFullScreen: types.SET_FULL_SCREEN,
       setPlayingState: types.SET_PLAYING_STATE,
+      setCurrentIndex: types.SET_CURRENT_INDEX,
     }),
+  },
+  components: {
+    ProgressBar,
   },
   watch: {
     currentSong() {
