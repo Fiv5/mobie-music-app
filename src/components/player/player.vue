@@ -30,7 +30,7 @@
           <div class="progress-wrapper">
             <span class="time time-l">{{format(currentTime)}}</span>
             <div class="progress-bar-wrapper">
-              <progress-bar :percent="percent"></progress-bar>
+              <progress-bar @percentChange="onPercentChange" :percent="percent"></progress-bar>
             </div>
             <span class="time time-r">{{format(currentSong.duration)}}</span>
           </div>
@@ -64,7 +64,9 @@
           <p class="desc" v-html="currentSong.singer"></p>
         </div>
         <div class="control">
-          <i @click.stop="togglePlaying" :class="miniIcon"></i>
+          <progress-circle :radius="32" :percent="percent">
+            <i @click.stop="togglePlaying" class="icon-mini" :class="miniIcon"></i>
+          </progress-circle>
         </div>
         <div class="control">
           <i class="icon-playlist"></i>
@@ -87,6 +89,7 @@ import * as types from 'src/store/mutation-types'
 import animations from 'create-keyframe-animation'
 import { prefixStyle } from 'src/common/js/dom'
 import ProgressBar from 'src/base/progress-bar/progress-bar'
+import ProgressCircle from 'src/base/progress-circle/progress-circle'
 
 const transform = prefixStyle('transform')
 export default {
@@ -127,6 +130,9 @@ export default {
         num = '0' + num
       }
       return num
+    },
+    onPercentChange(percent) {
+      this.$refs.audio.currentTime = this.currentSong.duration * percent
     },
     format(interval) {
       interval = ~~interval
@@ -244,6 +250,7 @@ export default {
   },
   components: {
     ProgressBar,
+    ProgressCircle,
   },
   watch: {
     currentSong() {

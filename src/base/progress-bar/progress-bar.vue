@@ -1,15 +1,21 @@
 <template>
-  <div class="progress-bar" ref="progressBar">
+  <div class="progress-bar"
+       ref="progressBar"
+       @click="progressClick">
     <div class="bar-inner">
       <div class="progress" ref="progress"></div>
-      <div class="progress-btn-wrapper" ref="progressBtn">
+      <div class="progress-btn-wrapper"
+           ref="progressBtn"
+           @touchstart.prevent="progressTouchStart"
+           @touchmove.prevent="progressTouchMove"
+           @touchend="progressTouchEnd">
         <div class="progress-btn"></div>
       </div>
     </div>
   </div>
 </template>
 <script>
-import {prefixStyle} from 'common/js/dom'
+import { prefixStyle } from 'common/js/dom'
 
 const transform = prefixStyle('transform')
 const PROGRESS_BTN_WIDTH = 16
@@ -20,13 +26,63 @@ export default {
       default: 0,
     },
   },
+  created() {
+    this.touch = {}
+    // 缓存进度条宽度
+    this.barWidth = null
+  },
+  methods: {
+    progressClick(e) {
+      const offsetWidth =
+        e.offsetX || e.clientX - e.currentTarget.getBoundingClientRect().left
+      this._offset(offsetWidth)
+      this._triggerPercent()
+    },
+    progressTouchStart(e) {
+      this.touch.initiated = true
+      this.touch.startX = e.touches[0].pageX
+      this.touch.left = this.$refs.progress.clientWidth
+    },
+    progressTouchMove(e) {
+      if (!this.touch.initiated) {
+        return
+      }
+
+      const deltaX = e.touches[0].pageX - this.touch.startX
+      const offsetWidth = Math.min(
+        this.barWidth,
+        Math.max(0, this.touch.left + deltaX)
+      )
+      this._offset(offsetWidth)
+    },
+    progressTouchEnd(e) {
+      this.touch.initiated = false
+      this._triggerPercent()
+    },
+    _triggerPercent() {
+      const barWidth = this.barWidth
+      const percent = this.$refs.progress.clientWidth / barWidth
+      this.$emit('percentChange', percent)
+    },
+    _offset(offsetWidth) {
+      this.$refs.progress.style.width = `${offsetWidth}px`
+      this.$refs.progressBtn.style[
+        transform
+      ] = `translate3d(${offsetWidth}px, 0, 0)`
+    },
+    _cacheBarWidth() {
+      if (!this.barWidth) {
+        this.barWidth = this.$refs.progressBar.clientWidth - PROGRESS_BTN_WIDTH
+      }
+    },
+  },
   watch: {
     percent(newVal) {
-      if (newVal >= 0) {
-        const barWidth = this.$refs.progressBar.clientWidth - PROGRESS_BTN_WIDTH
+      if (newVal >= 0 && !this.touch.initiated) {
+        this._cacheBarWidth()
+        const barWidth = this.barWidth
         const offsetWidth = newVal * barWidth
-        this.$refs.progress.style.width = `${offsetWidth}px`
-        this.$refs.progressBtn.style[transform] = `translate3d(${offsetWidth}px, 0, 0)`
+        this._offset(offsetWidth)
       }
     },
   },
