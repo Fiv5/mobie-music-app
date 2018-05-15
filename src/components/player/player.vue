@@ -36,7 +36,7 @@
           </div>
           <div class="operators">
             <div class="icon i-left">
-              <i class="icon-sequence"></i>
+              <i :class="iconMode" @click="changeMode"></i>
             </div>
             <div class="icon i-left" :class="disableCls">
               <i @click="prev" class="icon-prev"></i>
@@ -78,6 +78,7 @@
            @canplay="ready"
            @error="error"
            @timeupdate="updateTime"
+           @ended="end"
            >
     </audio>
   </div>
@@ -90,16 +91,24 @@ import animations from 'create-keyframe-animation'
 import { prefixStyle } from 'src/common/js/dom'
 import ProgressBar from 'src/base/progress-bar/progress-bar'
 import ProgressCircle from 'src/base/progress-circle/progress-circle'
-
+import { playMode } from 'common/js/config'
+import { shuffle } from 'common/js/util'
 const transform = prefixStyle('transform')
 export default {
   data() {
     return {
       songReady: false,
-      currentTime: 0,
+      currentTime: 0
     }
   },
   computed: {
+    iconMode() {
+      return this.mode === playMode.sequence
+        ? 'icon-sequence'
+        : this.mode === playMode.loop
+          ? 'icon-loop'
+          : 'icon-random'
+    },
     percent() {
       return parseFloat(this.currentTime / this.currentSong.duration)
     },
@@ -112,18 +121,43 @@ export default {
     miniIcon() {
       return this.playing ? 'icon-pause-mini' : 'icon-play-mini'
     },
+    disableCls() {
+      return this.songReady ? '' : 'disable'
+    },
     ...mapGetters([
       'fullScreen',
       'playlist',
       'currentSong',
       'playing',
       'currentIndex',
-    ]),
-    disableCls() {
-      return this.songReady ? '' : 'disable'
-    },
+      'mode',
+      'sequenceList'
+    ])
   },
   methods: {
+    resetCurrentIdx(list) {
+      let index = list.findIndex(item => item.id === this.currentSong.id)
+      this.setCurrentIndex(index)
+    },
+    changeMode() {
+      const mode = (this.mode + 1) % 3
+      this.setPlayMode(mode)
+      const playlist = [...this.playlist]
+      let list = mode === playMode.random ? shuffle(playlist) : playlist
+      this.resetCurrentIdx(list)
+      this.setPlayList(list)
+    },
+    end() {
+      if (this.mode === playMode.loop) {
+        this.loop()
+      } else {
+        this.next()
+      }
+    },
+    loop() {
+      this.$refs.audio.currentTime = 0
+      this.$refs.audio.play()
+    },
     _pad(num, n = 2) {
       let l = num.toString().length
       while (l++ < n) {
@@ -189,14 +223,14 @@ export default {
 
       let animation = {
         0: {
-          transform: `translate3d(${x}px, ${y}px, 0) scale(${scale})`,
+          transform: `translate3d(${x}px, ${y}px, 0) scale(${scale})`
         },
         60: {
-          transform: `translate3d(0, 0, 0) scale(1.1)`,
+          transform: `translate3d(0, 0, 0) scale(1.1)`
         },
         100: {
-          transform: `translate3d(0, 0, 0) scale(1)`,
-        },
+          transform: `translate3d(0, 0, 0) scale(1)`
+        }
       }
 
       animations.registerAnimation({
@@ -204,8 +238,8 @@ export default {
         animation,
         presets: {
           duration: 400,
-          easing: 'linear',
-        },
+          easing: 'linear'
+        }
       })
 
       animations.runAnimation(this.$refs.cdWrapper, 'move', done)
@@ -239,21 +273,26 @@ export default {
       return {
         x,
         y,
-        scale,
+        scale
       }
     },
     ...mapMutations({
       setFullScreen: types.SET_FULL_SCREEN,
       setPlayingState: types.SET_PLAYING_STATE,
       setCurrentIndex: types.SET_CURRENT_INDEX,
-    }),
+      setPlayMode: types.SET_PLAY_MODE,
+      setPlayList: types.SET_PLAY_LIST
+    })
   },
   components: {
     ProgressBar,
-    ProgressCircle,
+    ProgressCircle
   },
   watch: {
-    currentSong() {
+    currentSong(newSong, oldSong) {
+      if (newSong.id === oldSong.id) {
+        return
+      }
       this.$nextTick(() => {
         this.$refs.audio.play()
       })
@@ -263,8 +302,8 @@ export default {
       this.$nextTick(() => {
         newPlaying ? audio.play() : audio.pause()
       })
-    },
-  },
+    }
+  }
 }
 </script>
 
