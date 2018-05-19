@@ -25,6 +25,19 @@
               </div>
             </div>
           </div>
+          <Scroll class="middle-r" ref="lyricList" :data="currentLyric && currentLyric.lines">
+            <div class="lyric-wrapper">
+              <div v-if="currentLyric">
+                <p ref="lyricLine"
+                   class="text"
+                   :class="{'current': currentLineNum === index}"
+                   v-for="(line, index) of currentLyric.lines"
+                   :key="line.time">
+                  {{line.txt}}
+                </p>
+              </div>
+            </div>
+          </Scroll>
         </div>
         <div class="bottom">
           <div class="progress-wrapper">
@@ -94,6 +107,7 @@ import ProgressCircle from 'src/base/progress-circle/progress-circle'
 import { playMode } from 'common/js/config'
 import { shuffle } from 'common/js/util'
 import Lyric from 'lyric-parser'
+import Scroll from 'src/base/scroll/scroll'
 
 const transform = prefixStyle('transform')
 export default {
@@ -102,7 +116,8 @@ export default {
       songReady: false,
       currentTime: 0,
       radius: 32,
-      currentLyric: null
+      currentLyric: null,
+      currentLineNum: 0
     }
   },
   computed: {
@@ -139,9 +154,21 @@ export default {
     ])
   },
   methods: {
+    handlerLyric({ lineNum, txt }) {
+      this.currentLineNum = lineNum
+      if (lineNum > 5) {
+        let lineEl = this.$refs.lyricLine[lineNum - 5]
+        this.$refs.lyricList.scrollToElement(lineEl, 1000)
+      } else {
+        this.$refs.lyricList.scrollTo(0, 0, 1000)
+      }
+    },
     getLyric() {
       this.currentSong.getLyric().then(lyric => {
-        this.currentLyric = new Lyric(lyric)
+        this.currentLyric = new Lyric(lyric, this.handlerLyric)
+        if (this.playing) {
+          this.currentLyric.play()
+        }
         console.log(this.currentLyric)
       })
     },
@@ -296,7 +323,8 @@ export default {
   },
   components: {
     ProgressBar,
-    ProgressCircle
+    ProgressCircle,
+    Scroll
   },
   watch: {
     currentSong(newSong, oldSong) {
