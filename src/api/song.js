@@ -25,3 +25,23 @@ export const getSongUrlVkey = songMid => {
       return Promise.resolve(res.data)
     })
 }
+
+// 获取歌词
+export const getLyric = mid => {
+  const url = '/api/lyric'
+  const data = Object.assign({}, commonParams, {
+    songmid: mid,
+    pcachetime: Date.now(),
+    platform: 'yqq',
+    hostUin: 0,
+    format: 'json',
+    needNewCode: 0,
+    g_tk: 5381
+  })
+
+  return axios
+    .get(url, {
+      params: data
+    })
+    .then(res => Promise.resolve(res.data))
+}

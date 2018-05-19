@@ -100,6 +100,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
           })
           .then(response => {
             let ret = response.data
+            // 后端返回jsonp，代理处理取得json数据
             if (typeof ret === 'string') {
               var reg = /^\w+\(({[^()]+})\)$/
               var mathes = ret.match(reg)
@@ -112,6 +113,31 @@ const devWebpackConfig = merge(baseWebpackConfig, {
           .catch(error => {
             console.log(error)
           })
+      })
+
+      apiRoutes.get('/lyric', (req, res) => {
+        const url = 'https://c.y.qq.com/lyric/fcgi-bin/fcg_query_lyric_new.fcg'
+        const params = req.query
+        axios
+          .get(url, {
+            headers: {
+              referer: 'https://y.qq.com/portal/player.html'
+            },
+            params
+          })
+          .then(response => {
+            let ret = response.data
+            // 后端返回jsonp，代理处理取得json数据
+            if (typeof ret === 'string') {
+              var reg = /^\w+\(({[^()]+})\)$/
+              var mathes = ret.match(reg)
+              if (mathes) {
+                ret = JSON.parse(mathes[1])
+              }
+            }
+            res.json(ret)
+          })
+          .catch(err => console.log(err))
       })
       // 歌单分类
       // apiRoutes.get('/getDiscList', function(req, res) {

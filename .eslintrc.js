@@ -29,6 +29,7 @@ module.exports = {
     'eol-last': 'off',
     'space-before-function-paren': 'off',
     'no-trailing-spaces': 'off',
-    'standard/computed-property-even-spacing': 'off'
+    'standard/computed-property-even-spacing': 'off',
+    'prefer-promise-reject-errors': 'off'
   }
 }

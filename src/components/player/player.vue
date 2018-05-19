@@ -64,7 +64,7 @@
           <p class="desc" v-html="currentSong.singer"></p>
         </div>
         <div class="control">
-          <progress-circle :radius="32" :percent="percent">
+          <progress-circle :radius="radius" :percent="percent">
             <i @click.stop="togglePlaying" class="icon-mini" :class="miniIcon"></i>
           </progress-circle>
         </div>
@@ -93,12 +93,16 @@ import ProgressBar from 'src/base/progress-bar/progress-bar'
 import ProgressCircle from 'src/base/progress-circle/progress-circle'
 import { playMode } from 'common/js/config'
 import { shuffle } from 'common/js/util'
+import Lyric from 'lyric-parser'
+
 const transform = prefixStyle('transform')
 export default {
   data() {
     return {
       songReady: false,
-      currentTime: 0
+      currentTime: 0,
+      radius: 32,
+      currentLyric: null
     }
   },
   computed: {
@@ -135,6 +139,12 @@ export default {
     ])
   },
   methods: {
+    getLyric() {
+      this.currentSong.getLyric().then(lyric => {
+        this.currentLyric = new Lyric(lyric)
+        console.log(this.currentLyric)
+      })
+    },
     resetCurrentIdx(list) {
       let index = list.findIndex(item => item.id === this.currentSong.id)
       this.setCurrentIndex(index)
@@ -295,6 +305,7 @@ export default {
       }
       this.$nextTick(() => {
         this.$refs.audio.play()
+        this.getLyric()
       })
     },
     playing(newPlaying) {
