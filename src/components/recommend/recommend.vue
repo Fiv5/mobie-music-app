@@ -40,6 +40,7 @@ import Loading from 'src/base/loading/loading'
 import { getRecommend, getDiscList } from 'src/api/recommend'
 import { ERR_OK } from 'src/api/config'
 import { playlistMixin } from 'common/js/mixin'
+import { setTimeout } from 'timers'
 
 export default {
   mixins: [playlistMixin],
