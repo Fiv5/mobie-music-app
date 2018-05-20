@@ -60,7 +60,7 @@ export default {
     return {
       scrollY: -1,
       currIndex: 0,
-      diff: -1,
+      diff: -1
     }
   },
   props: {
@@ -68,8 +68,8 @@ export default {
       type: Array,
       default: function() {
         return []
-      },
-    },
+      }
+    }
   },
   computed: {
     shortcutList() {
@@ -80,7 +80,7 @@ export default {
         return null
       }
       return this.data[this.currIndex] ? this.data[this.currIndex].title : null
-    },
+    }
   },
   methods: {
     selectSinger(singer) {
@@ -100,6 +100,9 @@ export default {
       let delta = ((this.touch.y2 - this.touch.y1) / ANCHOR_HEIGHT) | 0
       let anchorIndex = this.touch.anchorIndex + delta
       this._scrollTo(anchorIndex)
+    },
+    refresh() {
+      this.$refs.listview.refresh()
     },
     scroll(pos) {
       this.scrollY = pos.y
@@ -129,7 +132,7 @@ export default {
         height += item.clientHeight
         this.listHeight.push(height)
       }
-    },
+    }
   },
   watch: {
     data() {
@@ -163,12 +166,12 @@ export default {
       const fixedTop =
         newVal > 0 && newVal < FIXED_TITLE ? newVal - FIXED_TITLE : 0
       this.$refs.fixed.style.transform = `translate3d(0, ${fixedTop}px, 0)`
-    },
+    }
   },
   components: {
     Scroll,
-    Loading,
-  },
+    Loading
+  }
 }
 </script>
 

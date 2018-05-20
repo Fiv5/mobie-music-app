@@ -32,11 +32,13 @@ import Scroll from 'src/base/scroll/scroll'
 import SongList from 'src/base/song-list/song-list'
 import { prefixStyle } from 'common/js/dom'
 import Loading from 'src/base/loading/loading'
+import { playlistMixin } from 'common/js/mixin'
 
 const OFFSET_HEIGHT = 40
 const transform = prefixStyle('transform')
 const backdrop = prefixStyle('backdrop-filter')
 export default {
+  mixins: [playlistMixin],
   created() {
     this.probeType = 3
     this.listenScroll = true
@@ -44,34 +46,39 @@ export default {
   props: {
     bgImage: {
       type: String,
-      default: '',
+      default: ''
     },
     songs: {
       type: Array,
       default() {
         return []
-      },
+      }
     },
     title: {
       type: String,
-      default: '',
-    },
+      default: ''
+    }
   },
   data() {
     return {
-      scrollY: 0,
+      scrollY: 0
     }
   },
   computed: {
     bgStyle() {
       return `background-image:url(${this.bgImage})`
-    },
+    }
   },
   methods: {
+    handlePlaylist(playlist) {
+      const bottom = playlist.length > 0 ? '60px' : ''
+      this.$refs.list.$el.style.bottom = bottom
+      this.$refs.list.refresh()
+    },
     selectItem(item, index) {
       this.selectPlay({
         list: this.songs,
-        index,
+        index
       })
     },
     back() {
@@ -80,7 +87,7 @@ export default {
     scroll(pos) {
       this.scrollY = pos.y
     },
-    ...mapActions(['selectPlay']),
+    ...mapActions(['selectPlay'])
   },
   watch: {
     scrollY(newY) {
@@ -112,7 +119,7 @@ export default {
 
       this.$refs.bgImage.style.zIndex = zIndex
       this.$refs.bgImage.style[transform] = `scale(${scale})`
-    },
+    }
   },
   mounted() {
     this.imageHeight = this.$refs.bgImage.clientHeight
@@ -122,8 +129,8 @@ export default {
   components: {
     Scroll,
     SongList,
-    Loading,
-  },
+    Loading
+  }
 }
 </script>
 
