@@ -139,36 +139,18 @@ const devWebpackConfig = merge(baseWebpackConfig, {
           })
           .catch(err => console.log(err))
       })
-      // 歌单分类
-      // apiRoutes.get('/getDiscList', function(req, res) {
-      //   const url =
-      //     'https://c.y.qq.com/splcloud/fcgi-bin/fcg_get_diss_tag_conf.fcg'
-      //   const params = req.query
-      //   axios
-      //     .get(url, {
-      //       headers: {
-      //         referer: 'https://y.qq.com/portal/playlist.html'
-      //       },
-      //       params
-      //     })
-      //     .then(response => res.json(response.data))
-      //     .catch(e => console.log(e))
-      // })
 
-      // apiRoutes.get('/getDiscList', function(req, res) {
-      //   const url = 'http://ustbhuangyi.com/music/api/getCdInfo'
-      //   const params = req.query
-      //   axios
-      //     .get(url, {
-      //       headers: {
-      //         host: 'ustbhuangyi.com'
-      //       },
-      //       params
-      //     })
-      //     .then(response => res.json(response.data))
-      //     .catch(e => console.log(e))
-      // })
+      apiRoutes.get('/getSongList', (req, res) => {
+        const url =
+          'https://c.y.qq.com/qzone/fcg-bin/fcg_ucc_getcdinfo_byids_cp.fcg'
+        const params = req.query
+        const { disstid } = req.query
+        const referer = `https://y.qq.com/n/yqq/playlist/${disstid}.html`
 
+        axios
+          .get(url, { headers: { referer }, params })
+          .then(response => res.json(response.data))
+      })
       app.use('/api', apiRoutes)
     }
   },

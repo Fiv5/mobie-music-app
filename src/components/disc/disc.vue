@@ -6,6 +6,9 @@
 <script>
 import MusicList from 'components/music-list/music-list'
 import { mapGetters } from 'vuex'
+import { getSongList } from 'api/recommend'
+// import { ERR_OK } from 'api/config'
+
 export default {
   computed: {
     title() {
@@ -15,6 +18,16 @@ export default {
       return this.disc.imgurl
     },
     ...mapGetters(['disc'])
+  },
+  methods: {
+    _getSongList() {
+      getSongList(this.disc.dissid).then(res => {
+        console.log(res)
+      })
+    }
+  },
+  created() {
+    this._getSongList()
   },
   components: {
     MusicList

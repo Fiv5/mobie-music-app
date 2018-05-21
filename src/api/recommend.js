@@ -5,11 +5,12 @@ import axios from 'axios'
 export const getRecommend = () => {
   const url =
     'https://c.y.qq.com/musichall/fcgi-bin/fcg_yqqhomepagerecommend.fcg'
-  const data = Object.assign({}, commonParams, {
+  const data = {
+    ...commonParams,
     platform: 'h5',
     uin: 0,
     needNewCode: 1
-  })
+  }
 
   return jsonp(url, data, options)
 }
@@ -17,7 +18,8 @@ export const getRecommend = () => {
 // QQ音乐 --- 歌单列表
 export const getDiscList = () => {
   const url = '/api/getDiscList'
-  const data = Object.assign({}, commonParams, {
+  const data = {
+    ...commonParams,
     platform: 'yqq',
     hostUin: 0,
     g_tk: 1591850326,
@@ -31,7 +33,7 @@ export const getDiscList = () => {
     format: 'json',
     onlysong: 0,
     rnd: Math.random()
-  })
+  }
   return axios
     .get(url, {
       params: data
@@ -40,6 +42,23 @@ export const getDiscList = () => {
     .catch(e => console.log(e))
 }
 
+export const getSongList = disstid => {
+  const url = '/api/getSongList'
+  const data = {
+    ...commonParams,
+    type: 1,
+    json: 1,
+    utf8: 1,
+    onlysong: 0,
+    disstid,
+    loginUin: 0,
+    hostUin: 0,
+    format: 'json',
+    platform: 'yqq',
+    needNewCode: 0
+  }
+  return axios.get(url, { params: data }).then(res => Promise.resolve(res.data))
+}
 // 黄轶API
 // export const getDiscList = () => {
 //   // const url = 'http://ustbhuangyi.com/music/api/getCdInfo'
